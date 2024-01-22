@@ -1,61 +1,119 @@
-import { ApolloServer } from "@apollo/server";
-import { startStandaloneServer } from "@apollo/server/standalone";
-import typeDefs from "./typeDefs";
+import "reflect-metadata";
 
-interface Book {
-  title: string;
-  author: string;
-}
-const books: Book[] = [
-  {
-    title: "The Awakening",
-    author: "Kate Chopin",
-  },
-  {
-    title: "City of Glass",
-    author: "Paul Auster",
-  },
-];
+// console.log("hello");
+import express, { Request, Response } from "express";
+import { Ad } from "./types";
+import sqlite from "sqlite3";
+import db from "./db";
 
-// A schema is a collection of type definitions (hence "typeDefs")
-// that together define the "shape" of queries that are executed against
-// your data.
+const app = express();
+const port = 3000;
+//const db = new sqlite3.Database("the_good_corner.sqlite");
+/*const db1 = new sqlite3.Database("query.sqlite");*/
 
-// Resolvers define how to fetch the types defined in your schema.
-// This resolver retrieves books from the "books" array above.
-const resolvers = {
-  Query: {
-    books: () => books,
-  },
-  Mutation: {
-    addBook: (_: any, { data }: { data: Book }, ctx: any) => {
-      // _ UMD
-      books.push({ ...data });
-      return books;
-    },
-  },
-};
+app.use(express.json());
 
-const server = new ApolloServer({
-  typeDefs,
-  resolvers,
+app.get("/", (req: Request, res: Response) => {
+  res.send("Hello sunshine!");
+});
+/*parler directement à la table sql*/
+app.get("/ads", (req: Request, res: Response) => {
+  /*
+  db.all("SELECT * FROM ad", (err, rows) => {
+    if (!err) res.send(rows);
+    else {
+      console.log(err);
+      res.sendStatus(500);
+    }
+  });
+  */
 });
 
-// Passing an ApolloServer instance to the `startStandaloneServer` function:
-//  1. creates an Express app
-//  2. installs your ApolloServer instance as middleware
-//  3. prepares your app to handle incoming requests
+app.post("/ads", (req: Request, res: Response) => {
+  /*
+  const id = ads.length + 1;
+  const newAd = { ...req.body, id, createdAt: new Date().toISOString() };
 
-async function main() {
-  const { url } = await startStandaloneServer(server, {
-    listen: { port: 4000 },
-    context: async ({ req, res }) => {
-      //analyser la requête ...
+  console.log(newAd);
+  ads.push(req.body);
+  res.send("Request received, check the backend terminal");
+});
+*/
+  /* Je me suis arrete là*/
+  /*
+  db.run(
+    "INSERT INTO ad (title, description, owner, price, picture, location) VALUES($title, $description, $owner, $price, $picture, $location)",
+    {
+      $title: req.body.title,
+      $description: req.body.description, // placehorlder
+      $owner: req.body.owner,
+      $price: req.body.price,
+      $picture: req.body.picture,
+      $location: req.body.location,
+    }
+  );
+});
 
-      return { toto: "tata" };
-    },
-  });
+app.post("/ads", (req: Request, res: Response) => {
+  db1.run(
+    "INSERT INTO ad (title, description, owner, price, picture, location) VALUES($title, $description, $owner, $price, $picture, $location)",
+    {
+      $title: req.body.title,
+      $description: req.body.description, // placehorlder
+      $owner: req.body.owner,
+      $price: req.body.price,
+      $picture: req.body.picture,
+      $location: req.body.location,
+    }
+  );
+  */
+});
 
-  console.log(`🚀  Server ready at: ${url}`);
-}
-main();
+app.delete("/ads/:id", (req, res) => {
+  // /*
+  // const idAdToDelete = parseInt(req.params.id, 10);
+  // if (!ads.find((ad) => ad.id === idAdToDelete)) return res.sendStatus(404);
+  // /* declarative way
+  //  ads = ads.filter((ad) => ad.id !== idAdToDelete);*/
+  // ads.splice(
+  //   ads.findIndex((ad) => ad.id === idAdToDelete),
+  //   1
+  // );
+  // res.sendStatus(204).send({ message: "ad deleted !" });
+  //imperative way
+});
+
+// solution IA
+// app.delete("/ads/:id", (req, res) => {
+//   const idAdToDelete = parseInt(req.params.id, 10);
+//   const adToDelete = ads.find((ad) => ad.id === idAdToDelete);
+
+//   if (!adToDelete) {
+//     res.sendStatus(404);
+//   } else {
+//     ads = ads.filter((ad) => ad.id !== idAdToDelete);
+//     res.sendStatus(204);
+//     res.json({ message: "ad deleted !" });
+//   }
+// });
+
+app.patch("/ads/:id", (req, res) => {
+  /*
+  const idAdToUpdate = parseInt(req.params.id, 10);
+  if (!ads.find((ad) => ad.id === idAdToUpdate)) return res.sendStatus(404);
+
+  //imperative way
+
+  const indexOfAdToUpdate = ads.findIndex((ad) => ad.id === idAdToUpdate);
+  ads[indexOfAdToUpdate] = {
+    ...ads[indexOfAdToUpdate],
+    ...req.body,
+  };
+  res.send(ads[indexOfAdToUpdate]);
+  */
+});
+
+app.listen(port, async () => {
+  await db.initialize();
+  console.log(`Example app listening on port ${port}`);
+});

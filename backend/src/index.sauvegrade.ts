@@ -1,11 +1,15 @@
 // console.log("hello");
+
+import "reflect-metadata";
+
 import express, { Request, Response } from "express";
 import { Ad } from "./types";
 import sqlite3 from "sqlite3";
+import db from "./db";
 
 const app = express();
 const port = 3000;
-const db = new sqlite3.Database("the_good_corner.sqlite");
+//const db = new sqlite3.Database("the_good_corner.sqlite");
 const db1 = new sqlite3.Database("query.sqlite");
 
 let ads: Ad[] = [
@@ -41,6 +45,7 @@ app.get("/", (req: Request, res: Response) => {
 });
 // parler directement à la table sql
 app.get("/ads", (req: Request, res: Response) => {
+  /*
   db.all("SELECT * FROM ad", (err, rows) => {
     if (!err) res.send(rows);
     else {
@@ -48,6 +53,7 @@ app.get("/ads", (req: Request, res: Response) => {
       res.sendStatus(500);
     }
   });
+  */
 });
 
 app.post("/ads", (req: Request, res: Response) => {
@@ -61,7 +67,7 @@ app.post("/ads", (req: Request, res: Response) => {
 });
 */
   /* Je me suis arrete là*/
-
+  /*
   db.run(
     "INSERT INTO ad (title, description, owner, price, picture, location) VALUES($title, $description, $owner, $price, $picture, $location)",
     {
@@ -87,22 +93,20 @@ app.post("/ads", (req: Request, res: Response) => {
       $location: req.body.location,
     }
   );
+  */
 });
 
 app.delete("/ads/:id", (req, res) => {
-  const idAdToDelete = parseInt(req.params.id, 10);
-  if (!ads.find((ad) => ad.id === idAdToDelete)) return res.sendStatus(404);
-
-  /* declarative way
-   ads = ads.filter((ad) => ad.id !== idAdToDelete);*/
-
-  ads.splice(
-    ads.findIndex((ad) => ad.id === idAdToDelete),
-    1
-  );
-
-  res.sendStatus(204).send({ message: "ad deleted !" });
-
+  // /*
+  // const idAdToDelete = parseInt(req.params.id, 10);
+  // if (!ads.find((ad) => ad.id === idAdToDelete)) return res.sendStatus(404);
+  // /* declarative way
+  //  ads = ads.filter((ad) => ad.id !== idAdToDelete);*/
+  // ads.splice(
+  //   ads.findIndex((ad) => ad.id === idAdToDelete),
+  //   1
+  // );
+  // res.sendStatus(204).send({ message: "ad deleted !" });
   //imperative way
 });
 
@@ -121,6 +125,7 @@ app.delete("/ads/:id", (req, res) => {
 // });
 
 app.patch("/ads/:id", (req, res) => {
+  /*
   const idAdToUpdate = parseInt(req.params.id, 10);
   if (!ads.find((ad) => ad.id === idAdToUpdate)) return res.sendStatus(404);
 
@@ -132,8 +137,10 @@ app.patch("/ads/:id", (req, res) => {
     ...req.body,
   };
   res.send(ads[indexOfAdToUpdate]);
+  */
 });
 
-app.listen(port, () => {
+app.listen(port, async () => {
+  await db.initialize();
   console.log(`Example app listening on port ${port}`);
 });
