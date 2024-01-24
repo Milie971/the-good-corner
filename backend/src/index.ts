@@ -16,7 +16,7 @@ app.use(express.json());
 app.get("/", (req: Request, res: Response) => {
   res.send("Hello sunshine!");
 });
-/*parler directement à la table sql*/
+//parler directement à la table sql
 app.get("/ads", (req: Request, res: Response) => {
   /*
   db.all("SELECT * FROM ad", (err, rows) => {
@@ -38,11 +38,11 @@ app.post("/ads", (req: Request, res: Response) => {
   ads.push(req.body);
   res.send("Request received, check the backend terminal");
 });
-*/
-  /* Je me suis arrete là*/
-  /*
+
+  Je me suis arrete là
+  
   db.run(
-    "INSERT INTO ad (title, description, owner, price, picture, location) VALUES($title, $description, $owner, $price, $picture, $location)",
+    "INSERT INTO ad (title, description, owner, price, picture, location,createdAt, category_id) VALUES($title, $description, $owner, $price, $picture, $location, $createdAt, $category_id)",
     {
       $title: req.body.title,
       $description: req.body.description, // placehorlder
@@ -50,11 +50,15 @@ app.post("/ads", (req: Request, res: Response) => {
       $price: req.body.price,
       $picture: req.body.picture,
       $location: req.body.location,
+      $createdAt: req.body.createdAt,
+      $category_id: req.body.category_id,
     }
   );
+  */
 });
 
 app.post("/ads", (req: Request, res: Response) => {
+  /*
   db1.run(
     "INSERT INTO ad (title, description, owner, price, picture, location) VALUES($title, $description, $owner, $price, $picture, $location)",
     {
